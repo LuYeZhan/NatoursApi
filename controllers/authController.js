@@ -101,7 +101,7 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true
+    https: true
   });
   res.status(200).json({ status: 'success' });
 };
@@ -124,6 +124,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
+  if (token === 'loggedout') {
+    return next(res.redirect('/'));
+  }
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
